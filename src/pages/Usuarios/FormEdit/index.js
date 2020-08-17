@@ -73,7 +73,15 @@ const UsuarioForm = () => {
 
   const handleAdicionarAtividadeCurriculo = () => {
     api.post(`atividades/add-curriculo/${usuario.id}`, addAtividade).then(response => {
-      console.log('add');
+      setAddAtividade({})
+      setUsuario({ ...usuario, atividades: [...usuario.atividades, response.data] })
+    }).catch(e => console.log(e));
+  };
+
+  const handleRemoverAtividadeCurriculo = (atividadeRemover) => {
+    api.delete(`atividades/remover-curriculo/${usuario.id}`, { data: atividadeRemover }).then(response => {
+      const atividadesAtualizadas = atividades.filter(atividade => atividade.id === response.id);
+      setUsuario({ ...usuario, atividades: atividadesAtualizadas })
     }).catch(e => console.log(e));
   };
 
@@ -101,7 +109,7 @@ const UsuarioForm = () => {
             autoComplete="shipping address-line1"
           />
         </Grid>
-        <Grid container spacing={6}>
+        <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
             <TextField
               required
@@ -181,7 +189,7 @@ const UsuarioForm = () => {
                 </TableHead>
                 <TableBody>
                   {usuario.atividades.map((row) => (
-                    <TableRow key={row.name}>
+                    <TableRow key={row.id}>
                       <TableCell component="th" scope="row">
                         {row.id}
                       </TableCell>
@@ -189,9 +197,13 @@ const UsuarioForm = () => {
                       <TableCell align="right">{row.descricao}</TableCell>
                       <TableCell align="right">{row.local}</TableCell>
                       <TableCell align="right">
-                        <Button color="secondary" variant="contained" size="small" startIcon={<RemoveCircleIcon />}>
+                        <Button color="secondary"
+                          variant="contained"
+                          size="small"
+                          startIcon={<RemoveCircleIcon />}
+                          onClick={() => handleRemoverAtividadeCurriculo(row)}>
                           Remover
-            </Button>
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
