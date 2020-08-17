@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import api from '../../../services/api';
 
@@ -20,13 +21,20 @@ const usuarioDefault = {
 const UsuarioForm = () => {
   const { params } = useRouteMatch();
   const [usuario, setUsuario] = useState(usuarioDefault);
+  const [atividades, setAtividades] = useState([]);
   const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
     async function loadData () {
-      const { data } = await api.get(`usuarios/${params.id}`);
-      setUsuario(data);
+      const [usuarioResponse, atividadesResponse] = await Promise.all([
+        api.get(`/usuarios/${params.id}`),
+        api.get(`/atividades`)
+      ]);
+
+      setUsuario(usuarioResponse.data);
+      setAtividades(atividadesResponse.data);
     }
+
 
     loadData();
   }, [params])
@@ -91,6 +99,27 @@ const UsuarioForm = () => {
         </Grid>
       </Grid>
 
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={12}>
+          <Typography variant="h6" gutterBottom>
+            Adicionar Atividade
+      </Typography>
+        </Grid>
+        <Grid container item xs={12} direction="row" justify="flex-end" alignItems="center" >
+          <Grid item xs={12} sm={10} >
+            <Autocomplete
+              id="combo-box-demo"
+              options={atividades}
+              getOptionLabel={(option) => option.titulo}
+              style={{ display: '100%', marginRight: '5px' }}
+              renderInput={(params) => <TextField {...params} label="Atividade" variant="outlined" />}
+            />
+          </Grid>
+          <Grid item xs={12} sm={2}>
+            <Button variant="contained" size="large" color="primary" onClick={() => handleAtualizarUsuario()}>Adicionar</Button>
+          </Grid>
+        </Grid>
+      </Grid>
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
