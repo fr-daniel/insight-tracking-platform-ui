@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-
+import Grid from '@material-ui/core/Grid';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import Button from '@material-ui/core/Button';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
@@ -14,6 +15,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 import useStyles from './style';
 import api from '../../../services/api';
@@ -61,9 +63,11 @@ export default function UsuariosList () {
   return (
     <>
 
-      <Typography variant="h6" gutterBottom>
-        Usuários
-      </Typography>
+      <Grid container direction="row" justify="space-between" alignItems="center">
+        <Typography variant="h6" gutterBottom>Usuários</Typography>
+
+        <Button variant="contained" color="primary" startIcon={<AddCircleIcon />} component={Link} to={"/usuarios/add"}>Adicionar Usuário</Button>
+      </Grid>
       <Paper className={classes.root}>
 
         <TableContainer className={classes.container}>
