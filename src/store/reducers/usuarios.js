@@ -17,6 +17,14 @@ export default function usuarios (state = INITIAL_STATE, action) {
     case 'DELETE_USUARIO_SUCCESS':
       const usuarios = state.usuarios.filter(usuario => usuario.id !== action.payload.id);
       return { ...state, loading: true, usuarios }
+    case 'ADD_USUARIO_REQUEST':
+      return { ...state, loading: true }
+    case 'ADD_USUARIO_SUCCESS':
+      return { ...state, loading: true, usuarios: [...state.usuarios, action.payload.usuario] }
+    case 'ATUALIZAR_USUARIO_REQUEST':
+      return state
+    case 'ATUALIZAR_USUARIO_SUCCESS':
+      return { ...state, usuarios: [...state.usuarios] }
     default:
       return state;
   }

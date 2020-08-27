@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useRouteMatch } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -7,7 +7,6 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
-import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -19,62 +18,33 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 
 import CustomSnackbar from '../../../components/CustomSnackbar';
 
-
 import api from '../../../services/api';
+import useStyles from './style';
 
-const usuarioDefault = {
-  nome: '',
-  email: '',
-  telefone: '',
-  atividades: []
-}
-
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-  padding: {
-    padding: '10px',
-    marginTop: '20px'
-  }
-});
+import { atualizarUsuarioRequest, addAtividadeCurriculoRequest } from '../../../store/actions/usuarios';
+import { setAtividadesRequest } from '../../../store/actions/atividades';
 
 
-const UsuarioForm = () => {
-  const { params } = useRouteMatch();
-  const [usuario, setUsuario] = useState(usuarioDefault);
-  const [atividades, setAtividades] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [addAtividade, setAddAtividade] = useState({});
-
+const UsuarioForm = (props) => {
   const classes = useStyles();
 
+  const [usuario, setUsuario] = useState(props.location.state.usuarioEdit);
+  const { atividades } = useSelector(state => state.atividades);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [addAtividade, setAddAtividade] = useState({});
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    async function loadData () {
-      const [usuarioResponse, atividadesResponse] = await Promise.all([
-        api.get(`/usuarios/${params.id}`),
-        api.get(`/atividades`)
-      ]);
-
-      setUsuario(usuarioResponse.data);
-      setAtividades(atividadesResponse.data);
-    }
-
-
-    loadData();
-  }, [params])
+    dispatch(setAtividadesRequest());
+  }, [dispatch])
 
   const handleAtualizarUsuario = () => {
-    api.put(`usuarios`, usuario).then(response => {
-      setOpen(true);
-    });
+    dispatch(atualizarUsuarioRequest(usuario));
+    setOpenSnackbar(true);
   };
 
   const handleAdicionarAtividadeCurriculo = () => {
-    api.post(`atividades/add-curriculo/${usuario.id}`, addAtividade).then(response => {
-      setAddAtividade({})
-      setUsuario({ ...usuario, atividades: [...usuario.atividades, response.data] })
-    }).catch(e => console.log(e));
+    dispatch(addAtividadeCurriculoRequest(usuario.id, addAtividade))
   };
 
   const handleRemoverAtividadeCurriculo = (atividadeRemover) => {
@@ -206,7 +176,7 @@ const UsuarioForm = () => {
         </Grid>
       </Paper>
 
-      <CustomSnackbar message="Usuário Atualizado" open={open} severity="success" />
+      {openSnackbar && <CustomSnackbar message="Usuário Atualizado" severity="success" />}
     </>
   );
 }

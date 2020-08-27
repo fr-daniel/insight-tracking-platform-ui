@@ -15,31 +15,30 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 import useStyles from './style';
 
-import { setUsuariosRequest, deteleUsuarioRequest } from '../../../store/actions/usuarios';
+import { setAtividadesRequest, deteleAtividadeRequest } from '../../../store/actions/atividades';
 
 const columns = [
   { id: 'id', label: 'ID' },
-  { id: 'nome', label: 'Nome', minWidth: 100 },
-  { id: 'email', label: 'Email', minWidth: 100 },
-  { id: 'telefone', label: 'Telefone', minWidth: 100 },
+  { id: 'titulo', label: 'Título', minWidth: 100 },
+  { id: 'descricao', label: 'Descrição', minWidth: 100 },
+  { id: 'local', label: 'Local', minWidth: 100 },
   { id: 'acoes', label: 'Ações', minWidth: 100, align: 'center', },
 ];
 
-export default function UsuariosList () {
+export default function AtividadesList () {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const { usuarios } = useSelector(state => state.usuarios);
+  const { atividades } = useSelector(state => state.atividades);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setUsuariosRequest())
+    dispatch(setAtividadesRequest())
   }, [dispatch])
 
   const handleChangePage = (event, newPage) => {
@@ -54,8 +53,8 @@ export default function UsuariosList () {
   return (
     <>
       <Grid container direction="row" justify="space-between" alignItems="center">
-        <Typography variant="h6" gutterBottom>Usuários</Typography>
-        <Button variant="contained" color="primary" startIcon={<AddCircleIcon />} component={Link} to={"/usuarios/add"}>Adicionar Usuário</Button>
+        <Typography variant="h6" gutterBottom>Atividades</Typography>
+        <Button variant="contained" color="primary" startIcon={<AddCircleIcon />} component={Link} to={"/atividades/add"}>Adicionar Atividade</Button>
       </Grid>
       <Paper className={classes.root}>
         <TableContainer className={classes.container}>
@@ -74,31 +73,18 @@ export default function UsuariosList () {
               </TableRow>
             </TableHead>
             <TableBody>
-              {usuarios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+              {atividades.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                     <TableCell>{row.id}</TableCell>
-                    <TableCell>{row.nome}</TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.telefone}</TableCell>
+                    <TableCell>{row.titulo}</TableCell>
+                    <TableCell>{row.descricao}</TableCell>
+                    <TableCell>{row.local}</TableCell>
 
                     <TableCell align="center">
-                      <Link
-                        to={{
-                          pathname: `/usuarios/${row.id}/edit`,
-                          state: {
-                            usuarioEdit: row
-                          }
-                        }}
-
-                      >
-                        <Fab size="small" color="primary" aria-label="add" className={classes.margin}>
-                          <EditIcon />
-                        </Fab>
-                      </Link>
                       <Fab size="small" color="secondary" aria-label="add"
                         className={classes.margin}
-                        onClick={() => dispatch(deteleUsuarioRequest(row.id))}
+                        onClick={() => dispatch(deteleAtividadeRequest(row.id))}
                       >
                         <DeleteIcon />
                       </Fab>
@@ -112,7 +98,7 @@ export default function UsuariosList () {
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          count={usuarios.length}
+          count={atividades.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}

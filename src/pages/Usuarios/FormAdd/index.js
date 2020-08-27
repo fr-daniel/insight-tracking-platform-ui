@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 
-import api from '../../../services/api';
+import CustomSnackbar from '../../../components/CustomSnackbar';
+import { addUsuarioRequest } from '../../../store/actions/usuarios';
 
 const usuarioDefault = {
   nome: '',
@@ -16,23 +15,16 @@ const usuarioDefault = {
   telefone: ''
 }
 
-const UsuarioForm = () => {
+const UsuarioFormAdd = () => {
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [usuario, setUsuario] = useState(usuarioDefault);
-  const [open, setOpen] = React.useState(false);
+  const dispatch = useDispatch();
 
-  const handleAdicionarUsuario = () => {
-    api.post(`usuarios`, usuario).then(response => {
-      setOpen(true);
-      setUsuario(usuarioDefault);
-    });
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway')
-      return;
-
-    setOpen(false);
-  };
+  const handleAddUsuario = () => {
+    dispatch(addUsuarioRequest(usuario))
+    setUsuario({ ...usuarioDefault })
+    setOpenSnackbar(true);
+  }
 
   return (
     <>
@@ -77,32 +69,13 @@ const UsuarioForm = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <Button variant="contained" color="primary" onClick={() => handleAdicionarUsuario()}>Adicionar</Button>
+          <Button variant="contained" color="primary" onClick={() => handleAddUsuario()}>Adicionar</Button>
         </Grid>
       </Grid>
 
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        open={open}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        message="Usuário Adicionado"
-        action={
-          <>
-            <Button color="secondary" size="small" onClick={handleClose}>
-              FECHAR
-            </Button>
-            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </>
-        }
-      />
+      {openSnackbar && <CustomSnackbar message="Usuário Adicionado" severity="success" />}
     </>
   );
 }
 
-export default UsuarioForm;
+export default UsuarioFormAdd;
