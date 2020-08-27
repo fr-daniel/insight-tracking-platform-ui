@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -9,21 +10,19 @@ import LayersIcon from '@material-ui/icons/Layers';
 
 export const mainListItems = (
   <div>
-
     <ListItem button>
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItem>
-
-    <ListItem button component="a" href="/usuarios">
+    <ListItem button component={Link} to="/usuarios">
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
       <ListItemText primary="Usuários" />
     </ListItem>
-    <ListItem button component="a" href="/atividades">
+    <ListItem button component={Link} to="/atividades">
       <ListItemIcon>
         <LayersIcon />
       </ListItemIcon>

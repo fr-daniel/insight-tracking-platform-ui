@@ -5,9 +5,6 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -19,6 +16,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
+
+import CustomSnackbar from '../../../components/CustomSnackbar';
 
 
 import api from '../../../services/api';
@@ -83,13 +82,6 @@ const UsuarioForm = () => {
       const atividadesAtualizadas = atividades.filter(atividade => atividade.id === response.id);
       setUsuario({ ...usuario, atividades: atividadesAtualizadas })
     }).catch(e => console.log(e));
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway')
-      return;
-
-    setOpen(false);
   };
 
   return (
@@ -214,26 +206,7 @@ const UsuarioForm = () => {
         </Grid>
       </Paper>
 
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        open={open}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        message="Usuário Atualizado"
-        action={
-          <>
-            <Button color="secondary" size="small" onClick={handleClose}>
-              FECHAR
-            </Button>
-            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </>
-        }
-      />
+      <CustomSnackbar message="Usuário Atualizado" open={open} severity="success" />
     </>
   );
 }

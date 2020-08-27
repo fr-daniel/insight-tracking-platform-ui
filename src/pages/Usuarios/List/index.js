@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import Paper from '@material-ui/core/Paper';
@@ -18,7 +19,8 @@ import EditIcon from '@material-ui/icons/Edit';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 import useStyles from './style';
-import api from '../../../services/api';
+
+import { setUsuariosRequest, deteleUsuarioRequest } from '../../../store/actions/usuarios';
 
 const columns = [
   { id: 'id', label: 'ID' },
@@ -29,27 +31,16 @@ const columns = [
 ];
 
 export default function UsuariosList () {
-  const [usuarios, setUsuarios] = useState([]);
-
-  useEffect(() => {
-    async function loadData () {
-      const { data } = await api.get(`usuarios`);
-      console.log(data);
-      setUsuarios(data);
-    }
-
-    loadData();
-  }, [])
-
   const classes = useStyles();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const handleDeleteUsuario = (usuario) => {
-    api.delete(`usuarios/${usuario.id}`).then(reponse => {
-      setUsuarios(usuarios.filter(user => usuario.id !== user.id));
-    });
-  }
+  const { usuarios } = useSelector(state => state.usuarios);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setUsuariosRequest())
+  }, [dispatch])
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -62,7 +53,6 @@ export default function UsuariosList () {
 
   return (
     <>
-
       <Grid container direction="row" justify="space-between" alignItems="center">
         <Typography variant="h6" gutterBottom>Usuários</Typography>
 
@@ -103,7 +93,7 @@ export default function UsuariosList () {
 
                       <Fab size="small" color="secondary" aria-label="add"
                         className={classes.margin}
-                        onClick={() => handleDeleteUsuario(row)}
+                        onClick={() => dispatch(deteleUsuarioRequest(row.id))}
                       >
                         <DeleteIcon />
                       </Fab>
